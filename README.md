@@ -1,2 +1,2 @@
 # HackerRank
-my tries to solve HR tasks
+my tries to solve HR problems

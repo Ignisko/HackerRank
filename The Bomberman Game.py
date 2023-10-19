@@ -22,7 +22,7 @@ def bomberMan(n, grid):
         return grid
         
     state1 = detonate(grid)
-    state2 = detonate(state2)
+    state2 = detonate(state1)
     
     if n % 4 == 1:
         return state2
@@ -30,3 +30,4 @@ def bomberMan(n, grid):
         return ['O' * len(grid[0]) for _ in grid]
     if n % 4 == 3:
         return state1
+    

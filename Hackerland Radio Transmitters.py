@@ -13,26 +13,25 @@ import sys
 # The function accepts following parameters:
 #  1. INTEGER_ARRAY x
 #  2. INTEGER k
-#
 
+#
 def hackerlandRadioTransmitters(x, k):
     x.sort()  # Sort the house locations
+    n = len(x)
+    num_transmitters = 0
+    i = 0
 
-    transmitters = 0
-    i = 0  # Index to traverse the houses
-
-    while i < len(x):
-        transmitters += 1
-        location = x[i]  # Place the transmitter at this house
-        while i < len(x) and x[i] <= location + k:
+    while i < n:
+        num_transmitters += 1
+        loc = x[i] + k
+        while i < n and x[i] <= loc:  # Find the farthest house to place the transmitter
             i += 1
-        i -= 1  # Move back to the house within transmitter range
-
-        location = x[i]  # Place the next transmitter
-        while i < len(x) and x[i] <= location + k:
+        loc = x[i-1] + k
+        while i < n and x[i] <= loc:  # Move to the first house out of current transmitter's range
             i += 1
 
-    return transmitters
+    return num_transmitters
+
 
 if __name__ == '__main__':
     fptr = open(os.environ['OUTPUT_PATH'], 'w')

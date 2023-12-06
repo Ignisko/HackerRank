@@ -1,0 +1,55 @@
+#!/bin/python3
+
+import math
+import os
+import random
+import re
+import sys
+
+#
+# Complete the 'connectedCell' function below.
+#
+# The function is expected to return an INTEGER.
+# The function accepts 2D_INTEGER_ARRAY matrix as parameter.
+#
+#---------------------------------------------------------------------------
+def connectedCell(matrix):
+    def dfs(row, col):
+        if 0 <= row < n and 0 <= col < m and matrix[row][col] == 1:
+            matrix[row][col] = 0
+            size = 1
+            for dr in [-1, 0, 1]:
+                for dc in [-1, 0, 1]:
+                    if dr != 0 or dc != 0:
+                        size += dfs(row + dr, col + dc)
+            return size
+        return 0
+        
+    n, m = len(matrix), len(matrix[0])
+    max_region_size = 0
+    
+    for row in range(n):
+        for col in range(m):
+            if matrix[row][col] == 1:
+                max_region_size = max(max_region_size, dfs(row, col))
+                
+    return max_region_size
+#---------------------------------------------------------------------------
+            
+if __name__ == '__main__':
+    fptr = open(os.environ['OUTPUT_PATH'], 'w')
+
+    n = int(input().strip())
+
+    m = int(input().strip())
+
+    matrix = []
+
+    for _ in range(n):
+        matrix.append(list(map(int, input().rstrip().split())))
+
+    result = connectedCell(matrix)
+
+    fptr.write(str(result) + '\n')
+
+    fptr.close()

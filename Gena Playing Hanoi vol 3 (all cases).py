@@ -4,7 +4,7 @@ import os
 import math
 
 #---------------------------------------------------------------------------------------------
-from copy import deepcopy
+from collections import deque
 
 '''
 FUNCTION bfs(rods, n):
@@ -25,67 +25,41 @@ FOR each disk, UPDATE rods
 CALL bfs(rods, n) and PRINT result
 '''
 
-def solve_hanoi(N, a):
-    end = [[] for _ in range(4)]  # End state
-    initial = [[] for _ in range(4)]  # Initial state
 
-    # Initialize the end and initial states
-    for i in range(N - 1, -1, -1):
-        end[a[i] - 1].append(i + 1)
-        initial[0].append(i + 1)
+def tuplify(x):
+    return tuple(tuple(i) for i in x)
 
-    states = {0: initial}  # States to be checked
-    visited = {','.join(map(str, initial)): 1}  # States already visited
-    nextlevel = {}  # Next level states
+def moves(rods):
+    for x in range(4):
+        if rods[x]:
+            for y in range(4):
+                if not rods[y] or rods[y][-1] > rods[x][-1]:
+                    yield (x, y)
 
-    i = 0
-    z = 0
-    ind = 1
-    check = 0
+def do_move(rods, x, y):
+    rods = [list(r) for r in rods]
+    rods[y].append(rods[x].pop())
+    rods[1:4] = sorted(rods[1:4], key=lambda t: t[-1] if t else 0)
+    return tuplify(rods)
 
-    # Maximum steps: 2^N
-    while i <= math.pow(2, N):
-        for k in range(4):
-            for j in range(4):
-                temp = deepcopy(states[z])
-                if temp[k] and j != k:
-                    move_disk = temp[k].pop()
-                    if not temp[j] or (temp[j] and temp[j][-1] > move_disk):
-                        temp[j].append(move_disk)
-                        key = ','.join(map(str, temp))
-                        if key not in visited:
-                            states[ind] = temp
-                            visited[key] = 1
-                            nextlevel[ind] = 1
-                            ind += 1
-                            if temp == end:
-                                return i + 1
-                                check = 1
-                                break
-            if check == 1:
-                break
-        if check == 1:
-            break
-        del states[z]
-        z += 1
-        if z in nextlevel:
-            nextlevel = {}
-            i += 1
+def bfs(rods, n):
+    start = (tuplify(rods), 0)
+    visited = set()
+    visited.add(start)
+    q = deque([start])
+    while q:
+        cur, depth = q.popleft()
+        if all(len(r) == 0 for r in cur[1:]):
+            return depth
+        for x, y in moves(cur):
+            child = do_move(cur, x, y)
+            if child not in visited:
+                visited.add(child)
+                q.append((child, depth + 1))
+    return -1
 
-    return -1  # Return -1 or an appropriate value if no solution is found
-
-#---------------------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    fptr = open(os.environ['OUTPUT_PATH'], 'w')
-
-    n = int(input().strip())
-
-    loc = list(map(int, input().rstrip().split()))
-
-    res = solve_hanoi(n, loc)
-
-    fptr.write(str(res) + '\n')
-
-    fptr.close()
+n = int(input())
+rods = [[] for _ in range(4)]
+for i, disk in enumerate(map(int, input().split())):
+    rods[disk-1] = [i] + rods[disk-1]
+print(bfs(rods, n))

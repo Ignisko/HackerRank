@@ -1,0 +1,85 @@
+#!/bin/python3
+
+import math
+import os
+import random
+import re
+import sys
+
+
+# Complete the 'cubeSum' function below.
+#
+# The function is expected to return an INTEGER_ARRAY.
+# The function accepts following parameters:
+#  1. INTEGER n
+#  2. STRING_ARRAY operations
+#
+#---------------------------------------------------------------------------------------------
+
+"""
+function cubeSum(n, operations):
+    cube = {} # Dictionary to store updated values
+    results = [] # List to store results of queries
+
+    for operation in operations:
+        tokens = operation.split()
+        if tokens[0] == "UPDATE":
+            x, y, z, W = map(int, tokens[1:])
+            cube[(x, y, z)] = W
+        elif tokens[0] == "QUERY":
+            x1, y1, z1, x2, y2, z2 = map(int, tokens[1:])
+            sum = 0
+            for (x, y, z), W in cube.items():
+                if x1 <= x <= x2 and y1 <= y <= y2 and z1 <= z <= z2:
+                    sum += W
+            results.append(sum)
+    
+    return results
+"""
+
+def cubeSum(n, operations):
+    cube = {}  # Dictionary to store updated values with their coordinates as keys
+    results = []  # List to store the results of QUERY operations
+
+    for op in operations:
+        parts = op.split()
+        if parts[0] == 'UPDATE':
+            x, y, z, W = map(int, parts[1:])
+            cube[(x, y, z)] = W  # Update the value at the coordinate
+        elif parts[0] == 'QUERY':
+            x1, y1, z1, x2, y2, z2 = map(int, parts[1:])
+            query_sum = 0
+            # Calculate the sum within the specified range
+            for (x, y, z), W in cube.items():
+                if x1 <= x <= x2 and y1 <= y <= y2 and z1 <= z <= z2:
+                    query_sum += W
+            results.append(query_sum)  # Append the result of this QUERY to the results list
+
+    return results
+
+#---------------------------------------------------------------------------------------------
+
+if __name__ == '__main__':
+    fptr = open(os.environ['OUTPUT_PATH'], 'w')
+
+    T = int(input().strip())
+
+    for T_itr in range(T):
+        first_multiple_input = input().rstrip().split()
+
+        matSize = int(first_multiple_input[0])
+
+        m = int(first_multiple_input[1])
+
+        ops = []
+
+        for _ in range(m):
+            ops_item = input()
+            ops.append(ops_item)
+
+        res = cubeSum(matSize, ops)
+
+        fptr.write('\n'.join(map(str, res)))
+        fptr.write('\n')
+
+    fptr.close()
